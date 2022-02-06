@@ -13,22 +13,6 @@ Please take a look at my [notion reference page](https://admitted-industry-353.n
     ├── README.md
     └── countNet
         └── CountNet
-            ├── Dockerfile
-            ├── LICENSE
-            ├── README.md
-            ├── env.yml
-            ├── eval.py
-            ├── examples
-            │   └── 5_speakers.wav
-            ├── models
-            │   ├── CNN.h5
-            │   ├── CRNN.h5
-            │   ├── F-CRNN.h5
-            │   ├── RNN.h5
-            │   └── scaler.npz
-            ├── predict.py
-            ├── predict_audio.py
-            └── requirements.txt
 ## CountNet
 #### Usage
 First get the model repository
