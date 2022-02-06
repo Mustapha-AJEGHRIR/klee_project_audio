@@ -1,0 +1,11 @@
+md5: ce035adb8c8fb9e04237d7f7580e467c
+frozen: true
+deps:
+- checksum: '"md5:30c8f844dc59fa65d216d53db9dc37e2"'
+  size: 832499962
+  path: https://zenodo.org/record/1216072/files/LibriCount10-0dB.zip?download=1
+outs:
+- md5: 30c8f844dc59fa65d216d53db9dc37e2
+  size: 832499962
+  path: LibriCount.zip
+  isexec: true

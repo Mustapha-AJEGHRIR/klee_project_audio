@@ -6,13 +6,26 @@ This is an audio project for school (at Centralesupelec) with Klee group's partn
 # Usefull refs :
 Please take a look at my [notion reference page](https://admitted-industry-353.notion.site/References-7f4e39f499a04d5bb919e7b8df767b2a)
 
-# Content of the project
+# Data
+### Need of dvc
+dvc stands for data version control. It is a tool to manage data version. Install it by using :
+```bash
+$ pip install dvc
+```
+pull the data :
+```bash
+$ dvc pull
+```
 
+
+# Content of the project
+```
     .
     ├── LICENSE
     ├── README.md
     └── countNet
         └── CountNet
+```
 ## CountNet
 #### Usage
 First get the model repository
@@ -24,10 +37,8 @@ Get the dataset
 ```
 ```
 #### Description
-The goal :
+**The goal :**
+Count the amount of concurrent speakers in an Audio.
 
-    Count the amount of concurrent speakers in an Audio.
-
-Dataset and model :
-
-    The dataset and the model are both in the reference page.
+**Dataset and model :**
+The dataset and the model are both in the reference page.

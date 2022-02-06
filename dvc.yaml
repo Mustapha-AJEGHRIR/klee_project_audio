@@ -1,0 +1,7 @@
+stages:
+  extract:
+    cmd: unzip data/LibriCount.zip -d data/LibriCount
+    deps:
+    - data/LibriCount.zip
+    outs:
+    - data/LibriCount

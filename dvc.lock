@@ -1,0 +1,13 @@
+schema: '2.0'
+stages:
+  extract:
+    cmd: unzip data/LibriCount.zip -d data/LibriCount
+    deps:
+    - path: data/LibriCount.zip
+      md5: 30c8f844dc59fa65d216d53db9dc37e2
+      size: 832499962
+    outs:
+    - path: data/LibriCount
+      md5: c3f13118b438ef1d18db35fb9b050cad.dir
+      size: 917964087
+      nfiles: 11443
