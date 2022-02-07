@@ -7,24 +7,29 @@ This is an audio project for school (at Centralesupelec) with Klee group's partn
 Please take a look at my [notion reference page](https://admitted-industry-353.notion.site/References-7f4e39f499a04d5bb919e7b8df767b2a)
 
 # Data
-### Need of dvc
-dvc stands for data version control. It is a tool to manage data version. Install it by using :
-```bash
-$ pip install dvc
-```
-pull the data :
-```bash
-$ dvc pull
-```
+### Linux or wsl
+Just execute the bash script `get_data.sh` inside the data folder to get the data.
 
+```bash
+$ cd data
+$ bash get_data.sh
+```
 
 # Content of the project
 ```
     .
+    ├── CountNet
+    │   ├── Dockerfile
+    │   ...
+    │   └── requirements.txt
     ├── LICENSE
     ├── README.md
-    └── countNet
-        └── CountNet
+    ├── data
+    │   ├── LibriCount
+    │   ├── README.md
+    │   └── get_data.sh
+    └── notebooks
+        └── EDA.ipynb
 ```
 ## CountNet
 #### Usage
