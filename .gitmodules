@@ -1,3 +1,0 @@
-[submodule "countNet/CountNet"]
-	path = countNet/CountNet
-	url = https://github.com/faroit/CountNet
