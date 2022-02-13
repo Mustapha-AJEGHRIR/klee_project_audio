@@ -42,10 +42,12 @@ class AudioCountGenderFft(Dataset):
                 fft_noverlap = 240,  # from the paper
                 fft_window_type = "tukey", # default
                 fft_in_db = False,
+                eps = 1e-8,
                 **kwargs):
         self.sounds = sorted(glob(os.path.join(data_dir,"*.wav")))
         self.labels = sorted(glob(os.path.join(data_dir,"*.json")))
         self.dtype = dtype
+        self.eps = eps
         self.data = []
         for index in tqdm(range(len(self.sounds)), "Caching dataset"):
             sample_rate, clip = wavfile.read(self.sounds[index])
@@ -66,7 +68,7 @@ class AudioCountGenderFft(Dataset):
                                                     noverlap = fft_noverlap,
                                                     window = fft_window_type
                                                     )
-            fft /= np.linalg.norm(fft, axis=0, keepdims=True)
+            fft /= np.linalg.norm(fft, axis=0, keepdims=True) + self.eps
             print
             if fft_in_db:
                 # fft = librosa.amplitude_to_db(fft, ref=np.max)
