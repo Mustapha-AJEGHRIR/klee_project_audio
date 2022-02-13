@@ -12,8 +12,9 @@ import json
 import os
 from tqdm import tqdm
 # import sys
-import librosa
+# import librosa
 import scipy
+import scipy.signal
 import numpy as np
 
 # ---------------------------------------------------------------------------- #
@@ -66,10 +67,10 @@ class AudioCountGenderFft(Dataset):
                                                     window = fft_window_type
                                                     )
             fft /= np.linalg.norm(fft, axis=0, keepdims=True)
-            if fft_in_db:
-                fft = librosa.amplitude_to_db(fft, ref=np.max)
+            # if fft_in_db:
+            #     fft = librosa.amplitude_to_db(fft, ref=np.max)
             
-            self.data.append([torch.tensor(fft, dtype=self.dtype).unsqueeze(0), torch.tensor(genders, dtype=self.dtype)]) #unsqueeze serves for channel = 1
+            self.data.append([torch.tensor(fft, dtype=self.dtype).unsqueeze(0), torch.tensor(genders)]) #unsqueeze serves for channel = 1
                 
                 
     def __getitem__(self, index):
