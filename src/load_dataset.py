@@ -32,8 +32,8 @@ data_dir = os.path.join(os.path.dirname(__file__),"../data/LibriCount")
 
 class AudioCountGender(Dataset):
     def __init__(self, data_dir=data_dir, dtype = FTYPE, cache=True, **kwargs):
-        self.sounds = glob(os.path.join(data_dir,"*.wav"))
-        self.labels = glob(os.path.join(data_dir,"*.json"))
+        self.sounds = sorted(glob(os.path.join(data_dir,"*.wav")))
+        self.labels = sorted(glob(os.path.join(data_dir,"*.json")))
         self.dtype = dtype
         self.cache = cache
         if self.cache:
