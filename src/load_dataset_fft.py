@@ -67,8 +67,9 @@ class AudioCountGenderFft(Dataset):
                                                     window = fft_window_type
                                                     )
             fft /= np.linalg.norm(fft, axis=0, keepdims=True)
-            # if fft_in_db:
-            #     fft = librosa.amplitude_to_db(fft, ref=np.max)
+            if fft_in_db:
+                # fft = librosa.amplitude_to_db(fft, ref=np.max)
+                fft = -np.log(fft)/50 # the - is for not having negative values, the 50 is for some scaling (no very high values) 
             
             self.data.append([torch.tensor(fft, dtype=self.dtype).unsqueeze(0), torch.tensor(genders)]) #unsqueeze serves for channel = 1
                 
