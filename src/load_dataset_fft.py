@@ -43,8 +43,8 @@ class AudioCountGenderFft(Dataset):
                 fft_window_type = "tukey", # default
                 fft_in_db = False,
                 **kwargs):
-        self.sounds = glob(os.path.join(data_dir,"*.wav"))
-        self.labels = glob(os.path.join(data_dir,"*.json"))
+        self.sounds = sorted(glob(os.path.join(data_dir,"*.wav")))
+        self.labels = sorted(glob(os.path.join(data_dir,"*.json")))
         self.dtype = dtype
         self.data = []
         for index in tqdm(range(len(self.sounds)), "Caching dataset"):
@@ -67,9 +67,10 @@ class AudioCountGenderFft(Dataset):
                                                     window = fft_window_type
                                                     )
             fft /= np.linalg.norm(fft, axis=0, keepdims=True)
+            print
             if fft_in_db:
                 # fft = librosa.amplitude_to_db(fft, ref=np.max)
-                fft = -np.log(fft)/50 # the - is for not having negative values, the 50 is for some scaling (no very high values) 
+                fft = np.log(1 + fft) # the - is for not having negative values, the 50 is for some scaling (no very high values) 
             
             self.data.append([torch.tensor(fft, dtype=self.dtype).unsqueeze(0), torch.tensor(genders)]) #unsqueeze serves for channel = 1
                 
@@ -109,7 +110,7 @@ def get_splitter_dataloaders_fft(**kwargs):
     train, val = torch.utils.data.random_split(data, [int(len(data)*train_split), len(data)-int(len(data)*train_split)])
     train_loader = DataLoader(dataset=train, batch_size=batch_size, shuffle=True, num_workers=4)
     val_loader = DataLoader(dataset=val, batch_size=batch_size, shuffle=True, num_workers=4)
-    return train_loader, val_loader    
+    return train_loader, val_loader, data  
 
 
 
