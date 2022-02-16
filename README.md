@@ -38,9 +38,8 @@ First get the model repository
 $ git submodule init
 $ git submodule update
 ```
-Get the dataset
-```
-```
+
+
 #### Description
 **The goal :**
 Count the amount of concurrent speakers in an Audio.
