@@ -1,7 +1,7 @@
 # How to convert old keras models to new tensorflow 
 The CountNet repository contains `h5` models saved with `keras 2.3.1`. I have encountered some issues when loading these models using `tf.keras.models.load_model` or `tf.compat.v1.models.load_model`, especially the error :
 ```python
-    ('Keyword argument not understood:', 'input_dtype')
+('Keyword argument not understood:', 'input_dtype')
 ```
 Then I went to the docker image (see `Dockerfile`, `env.yml` and `requirements.txt` in CountNet repository) and ran the following script to save the model configuration as a json file and also as a ONNX model :
 ```python
@@ -44,3 +44,6 @@ keras2onnx.save_model(onnx_model, model_name+"_ONNX.onnx")
 ```
 Then I downloaded those json configuration and put them in my system in the `json_config` directory.
 Then I just ran the script `convert_models.py`. 
+```bash
+$ python convert_models.py
+```

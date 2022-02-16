@@ -1,6 +1,7 @@
 import tensorflow as tf
 import tensorflow.keras.backend as K
 import os.path as p
+import os
 
 def class_mae(y_true, y_pred):
     return K.mean(
@@ -19,6 +20,11 @@ H5_PATH = p.join(
 )
 JSON_DIR = p.join(p.dirname(__file__), "json_config")
 MODELS_DIR = p.join(p.dirname(__file__), "models")
+
+# create folder if not exist
+if not p.exists(MODELS_DIR):
+    os.makedirs(MODELS_DIR)
+
 
 for model_name in models:
     with open(p.join(JSON_DIR, model_name + '_config.json')) as json_file:
