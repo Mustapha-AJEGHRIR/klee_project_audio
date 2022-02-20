@@ -45,4 +45,5 @@ $ git submodule update
 Count the amount of concurrent speakers in an Audio.
 
 **Dataset and model :**
-The dataset and the model are both in the reference page.
+The dataset and the model are both in the reference page (see the notion link).
+ 
