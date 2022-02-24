@@ -69,7 +69,6 @@ class AudioCountGenderFft(Dataset):
                                                     window = fft_window_type
                                                     )
             fft /= np.linalg.norm(fft, axis=0, keepdims=True) + self.eps
-            print
             if fft_in_db:
                 # fft = librosa.amplitude_to_db(fft, ref=np.max)
                 fft = np.log(1 + fft) # the - is for not having negative values, the 50 is for some scaling (no very high values) 
