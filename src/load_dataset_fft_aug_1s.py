@@ -4,6 +4,9 @@
 TODO
     - Add random shifts
     - Add random crop
+    - Add random speed modifications
+    - Add random pitch modifications
+    
 """
 
 
