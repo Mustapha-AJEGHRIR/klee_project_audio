@@ -70,8 +70,12 @@ class AudioCountGenderFft(Dataset):
                 shuffle = False, #made by the dataloader itself
                 noise_attenuation = 0.1,
                 add_noise = True,
+                random_time_roll = True, # Will randomly shift the audio on the time axis (fft)
+                max_random_frequency_roll = 1, # 1*40=40hz, Will randomly roll between -max_random_frequency_roll and max_random_frequency_roll
                 **kwargs):
         # ---------------------------------- config ---------------------------------- #
+        self.random_time_roll = random_time_roll
+        self.max_random_frequency_roll = max_random_frequency_roll
         self.dtype = dtype
         self.shuffle = shuffle
         self.noise_attenuation = noise_attenuation
@@ -95,7 +99,7 @@ class AudioCountGenderFft(Dataset):
                                                         noverlap = fft_noverlap,
                                                         window = fft_window_type
                                                         )
-            self.noise.append(torch.tensor(fft_noise, dtype=self.dtype).unsqueeze(0))
+            self.noise.append(torch.tensor(fft_noise, dtype=self.dtype))
         # ---------------------------- load data from disk --------------------------- #
         for index in tqdm(range(len(self.sounds)), "Caching dataset"):
             sample_rate, clip = wavfile.read(self.sounds[index])
@@ -116,19 +120,22 @@ class AudioCountGenderFft(Dataset):
                                                     noverlap = fft_noverlap,
                                                     window = fft_window_type
                                                     )
-            self.data.append([torch.tensor(fft, dtype=self.dtype).unsqueeze(0), torch.tensor(genders)]) #unsqueeze serves for channel = 1
+            self.data.append([torch.tensor(fft, dtype=self.dtype), torch.tensor(genders)]) #unsqueeze serves for channel = 1
                 
                 
     def __getitem__(self, index):
         if self.add_noise:
             # print("Adding noise")
             random_i = np.random.randint(0, len(self.noise))
-            fft_noise = self.noise[random_i] * self.noise_attenuation * np.random.uniform(10.8, 100.2)
+            fft_noise = self.noise[random_i] * self.noise_attenuation
         else :
             fft_noise = 0
+        
         fft_mix = self.data[index][0] + fft_noise
         fft = fft_mix
-        fft = fft_mix / (np.linalg.norm(fft_mix, axis=1, keepdims=True) + self.eps)
+        fft = fft_mix / (np.linalg.norm(fft_mix, axis=0, keepdims=True) + self.eps)
+        
+
         if self.fft_in_db:
             # fft = librosa.amplitude_to_db(fft, ref=np.max)
             fft = np.log(1 + fft) # the - is for not having negative values, the 50 is for some scaling (no very high values) 
@@ -164,9 +171,12 @@ def get_splitter_dataloaders_fft(validation_noise = False, **kwargs):
         train_split = TRAIN_SPLIT
         
     data = AudioCountGenderFft(**kwargs)
-    # FIXME : I don't know if the torch utils loads first the data then split ? This is a problem for randomness
     train, val = torch.utils.data.random_split(data, [int(len(data)*train_split), len(data)-int(len(data)*train_split)])
-    val.add_noise = validation_noise
+    # ---------------------- No perturbation for validation ---------------------- #
+    val.dataset.add_noise = validation_noise
+    val.dataset.random_time_roll = False
+    val.dataset.max_random_frequency_roll = 0
+    # -------------------------------- Dataloaders ------------------------------- #
     train_loader = DataLoader(dataset=train, batch_size=batch_size, shuffle=True, num_workers=4)
     val_loader = DataLoader(dataset=val, batch_size=batch_size, shuffle=True, num_workers=4)
     return train_loader, val_loader, data  
