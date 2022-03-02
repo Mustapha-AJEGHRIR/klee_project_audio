@@ -79,8 +79,9 @@ class AudioCountGenderFft(Dataset):
         self.eps = eps
         self.fft_in_db = fft_in_db
         self.data = []
-        self.sounds = sorted(glob(os.path.join(data_dir,"*.wav")))[::20]
-        self.labels = sorted(glob(os.path.join(data_dir,"*.json")))[::20]
+        self.sounds = sorted(glob(os.path.join(data_dir,"*.wav")))[:2] #FIXME
+        self.labels = sorted(glob(os.path.join(data_dir,"*.json")))[:2]
+        print(self.sounds)
         if self.shuffle:
             self.sounds, self.labels = shuffe(self.sounds, self.labels)
         # ------------------------ load empty sounds from disk ----------------------- #
@@ -120,13 +121,14 @@ class AudioCountGenderFft(Dataset):
                 
     def __getitem__(self, index):
         if self.add_noise:
-            print("Adding noise")
-            fft_noise = np.random.choice(self.noise) * self.noise_attenuation
+            # print("Adding noise")
+            random_i = np.random.randint(0, len(self.noise))
+            fft_noise = self.noise[random_i] * self.noise_attenuation * np.random.uniform(10.8, 100.2)
         else :
             fft_noise = 0
         fft_mix = self.data[index][0] + fft_noise
         fft = fft_mix
-        # fft = fft_mix / (np.linalg.norm(fft_mix, axis=1, keepdims=True) + self.eps)
+        fft = fft_mix / (np.linalg.norm(fft_mix, axis=1, keepdims=True) + self.eps)
         if self.fft_in_db:
             # fft = librosa.amplitude_to_db(fft, ref=np.max)
             fft = np.log(1 + fft) # the - is for not having negative values, the 50 is for some scaling (no very high values) 
