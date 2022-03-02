@@ -20,7 +20,14 @@ $ bash get_data.sh
     .
     ├── CountNet
     │   ├── Dockerfile
-    │   ...
+    │   ├── LICENSE
+    │   ├── README.md
+    │   ├── env.yml
+    │   ├── eval.py
+    │   ├── examples
+    │   ├── models
+    │   ├── predict.py
+    │   ├── predict_audio.py
     │   └── requirements.txt
     ├── LICENSE
     ├── README.md
@@ -28,8 +35,28 @@ $ bash get_data.sh
     │   ├── LibriCount
     │   ├── README.md
     │   └── get_data.sh
-    └── notebooks
-        └── EDA.ipynb
+    ├── model_conversion
+    │   ├── README.md
+    │   ├── convert_models.py
+    │   ├── convert_tests.ipynb
+    │   ├── json_config
+    │   ├── models
+    │   ├── onnx
+    │   └── tinify.ipynb
+    ├── notebooks
+    │   ├── EDA.ipynb
+    │   ├── __init__.py
+    │   ├── dataset.ipynb
+    │   ├── fft_model.ipynb
+    │   ├── no_fft_train.ipynb
+    │   └── utils
+    ├── requirements.txt
+    └── src
+        ├── __init__.py
+        ├── __pycache__
+        ├── load_dataset.py
+        ├── load_dataset_fft.py
+        └── load_dataset_fft_aug.py
 ```
 ## CountNet
 #### Usage

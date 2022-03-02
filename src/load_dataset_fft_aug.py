@@ -85,7 +85,6 @@ class AudioCountGenderFft(Dataset):
         self.data = []
         self.sounds = sorted(glob(os.path.join(data_dir,"*.wav")))
         self.labels = sorted(glob(os.path.join(data_dir,"*.json")))
-        print(self.sounds)
         if self.shuffle:
             self.sounds, self.labels = shuffe(self.sounds, self.labels)
         # ------------------------ load empty sounds from disk ----------------------- #
@@ -125,7 +124,6 @@ class AudioCountGenderFft(Dataset):
                 
     def __getitem__(self, index):
         if self.add_noise:
-            # print("Adding noise")
             random_i = np.random.randint(0, len(self.noise))
             fft_noise = self.noise[random_i] * self.noise_attenuation
         else :
