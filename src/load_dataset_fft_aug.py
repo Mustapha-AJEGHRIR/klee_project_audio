@@ -83,8 +83,8 @@ class AudioCountGenderFft(Dataset):
         self.eps = eps
         self.fft_in_db = fft_in_db
         self.data = []
-        self.sounds = sorted(glob(os.path.join(data_dir,"*.wav")))[:2] #FIXME
-        self.labels = sorted(glob(os.path.join(data_dir,"*.json")))[:2]
+        self.sounds = sorted(glob(os.path.join(data_dir,"*.wav")))
+        self.labels = sorted(glob(os.path.join(data_dir,"*.json")))
         print(self.sounds)
         if self.shuffle:
             self.sounds, self.labels = shuffe(self.sounds, self.labels)
