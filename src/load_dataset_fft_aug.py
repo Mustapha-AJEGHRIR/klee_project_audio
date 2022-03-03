@@ -11,6 +11,7 @@ TODO
 
 # -------------------------------- torch stuff ------------------------------- #
 from curses import window
+from random import seed
 import torch
 from torch.utils.data import Dataset, DataLoader
 
@@ -26,8 +27,8 @@ from tqdm import tqdm
 import scipy
 import scipy.signal
 import numpy as np
-import copy
-
+# import copy
+from sklearn.model_selection import train_test_split
 # ---------------------------------------------------------------------------- #
 #                                   Constants                                  #
 # ---------------------------------------------------------------------------- #
@@ -61,6 +62,8 @@ def get_empty_audio(sounds):
 
 class AudioCountGenderFft(Dataset):
     def __init__(self, data_dir=data_dir,
+                split = "training",
+                train_split = TRAIN_SPLIT,
                 dtype = FTYPE,
                 fft_nperseg = 400,   # from the paper
                 fft_noverlap = 240,  # from the paper
@@ -74,6 +77,7 @@ class AudioCountGenderFft(Dataset):
                 max_random_frequency_roll = 1, # 1*40=40hz, Will randomly roll between -max_random_frequency_roll and max_random_frequency_roll
                 **kwargs):
         # ---------------------------------- config ---------------------------------- #
+        self.split = split
         self.random_time_roll = random_time_roll
         self.max_random_frequency_roll = max_random_frequency_roll
         self.dtype = dtype
@@ -85,6 +89,17 @@ class AudioCountGenderFft(Dataset):
         self.data = []
         self.sounds = sorted(glob(os.path.join(data_dir,"*.wav")))
         self.labels = sorted(glob(os.path.join(data_dir,"*.json")))
+        train_sounds, val_sounds, train_labels, val_labels = train_test_split(self.sounds, self.labels, train_size=train_split, random_state=42)
+        if split == "training":
+            self.sounds = train_sounds
+            self.labels = train_labels
+            
+        elif split == "validation":
+            self.sounds = val_sounds
+            self.labels = val_labels
+        else :
+            raise ValueError("split must be either 'training' or 'validation'")
+        
         if self.shuffle:
             self.sounds, self.labels = shuffe(self.sounds, self.labels)
         # ------------------------ load empty sounds from disk ----------------------- #
@@ -123,21 +138,24 @@ class AudioCountGenderFft(Dataset):
                 
                 
     def __getitem__(self, index):
-        if self.add_noise:
-            random_i = np.random.randint(0, len(self.noise))
-            fft_noise = self.noise[random_i] * self.noise_attenuation
-        else :
-            fft_noise = 0
-        
-        fft_mix = self.data[index][0] + fft_noise
-        fft = fft_mix
-        fft = fft_mix / (np.linalg.norm(fft_mix, axis=0, keepdims=True) + self.eps)
+        if self.split == "training":
+            if self.add_noise:
+                random_i = np.random.randint(0, len(self.noise))
+                fft_noise = self.noise[random_i] * self.noise_attenuation
+            else :
+                fft_noise = 0
+            
+            fft = self.data[index][0] + fft_noise
 
-        if self.random_time_roll:
-            max_roll = fft.shape[1]
-            fft = np.roll(fft, np.random.randint(- max_roll, max_roll), axis=1)
-        if self.max_random_frequency_roll > 0:
-            fft = np.roll(fft, np.random.randint(- self.max_random_frequency_roll, self.max_random_frequency_roll), axis=0)
+            if self.random_time_roll:
+                max_roll = fft.shape[1]
+                fft = np.roll(fft, np.random.randint(- max_roll, max_roll), axis=1)
+            if self.max_random_frequency_roll > 0:
+                fft = np.roll(fft, np.random.randint(- self.max_random_frequency_roll, self.max_random_frequency_roll), axis=0)
+        else :
+            fft = self.data[index][0]
+        
+        fft = fft / (np.linalg.norm(fft, axis=0, keepdims=True) + self.eps)
         if self.fft_in_db:
             # fft = librosa.amplitude_to_db(fft, ref=np.max)
             fft = np.log(1 + fft) # the - is for not having negative values, the 50 is for some scaling (no very high values) 
@@ -172,18 +190,20 @@ def get_splitter_dataloaders_fft(validation_noise = False, **kwargs):
         train_split = kwargs["TRAIN_SPLIT"]
     else:
         train_split = TRAIN_SPLIT
-        
-    data = AudioCountGenderFft(**kwargs)
-    train, val = torch.utils.data.random_split(data, [int(len(data)*train_split), len(data)-int(len(data)*train_split)])
-    val = copy.deepcopy(val)
-    # ---------------------- No perturbation for validation ---------------------- #
-    val.dataset.add_noise = validation_noise
-    val.dataset.random_time_roll = False
-    val.dataset.max_random_frequency_roll = 0
+    
+    # data = AudioCountGenderFft(**kwargs)
+    # train, val = torch.utils.data.random_split(data, [int(len(data)*train_split), len(data)-int(len(data)*train_split)])
+    train = AudioCountGenderFft(split = "training", train_split= train_split, **kwargs)
+    val = AudioCountGenderFft(split = "validation", train_split= train_split, **kwargs)
+    # # val = copy.deepcopy(val) # FIXME
+    # # ---------------------- No perturbation for validation ---------------------- #
+    # val.dataset.add_noise = validation_noise
+    # val.dataset.random_time_roll = False
+    # val.dataset.max_random_frequency_roll = 0
     # -------------------------------- Dataloaders ------------------------------- #
     train_loader = DataLoader(dataset=train, batch_size=batch_size, shuffle=True, num_workers=4)
     val_loader = DataLoader(dataset=val, batch_size=batch_size, shuffle=True, num_workers=4)
-    return train_loader, val_loader, data  
+    return train_loader, val_loader, train, val
 
 
 
