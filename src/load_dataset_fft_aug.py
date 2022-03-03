@@ -138,10 +138,10 @@ class AudioCountGenderFft(Dataset):
             fft = np.roll(fft, np.random.randint(- max_roll, max_roll), axis=1)
         if self.max_random_frequency_roll > 0:
             fft = np.roll(fft, np.random.randint(- self.max_random_frequency_roll, self.max_random_frequency_roll), axis=0)
-
         if self.fft_in_db:
             # fft = librosa.amplitude_to_db(fft, ref=np.max)
             fft = np.log(1 + fft) # the - is for not having negative values, the 50 is for some scaling (no very high values) 
+        fft = torch.tensor(fft, dtype=self.dtype)
         return fft, self.data[index][1]
     
     def __len__(self):
