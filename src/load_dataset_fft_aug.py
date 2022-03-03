@@ -6,7 +6,6 @@ TODO
     - Add random crop
     - Add random speed modifications
     - Add random pitch modifications
-    
 """
 
 
@@ -27,6 +26,7 @@ from tqdm import tqdm
 import scipy
 import scipy.signal
 import numpy as np
+import copy
 
 # ---------------------------------------------------------------------------- #
 #                                   Constants                                  #
@@ -83,8 +83,8 @@ class AudioCountGenderFft(Dataset):
         self.eps = eps
         self.fft_in_db = fft_in_db
         self.data = []
-        self.sounds = sorted(glob(os.path.join(data_dir,"*.wav")))
-        self.labels = sorted(glob(os.path.join(data_dir,"*.json")))
+        self.sounds = sorted(glob(os.path.join(data_dir,"*.wav")))[:2]
+        self.labels = sorted(glob(os.path.join(data_dir,"*.json")))[:2]
         if self.shuffle:
             self.sounds, self.labels = shuffe(self.sounds, self.labels)
         # ------------------------ load empty sounds from disk ----------------------- #
@@ -132,7 +132,12 @@ class AudioCountGenderFft(Dataset):
         fft_mix = self.data[index][0] + fft_noise
         fft = fft_mix
         fft = fft_mix / (np.linalg.norm(fft_mix, axis=0, keepdims=True) + self.eps)
-        
+
+        if self.random_time_roll:
+            max_roll = fft.shape[1]
+            fft = np.roll(fft, np.random.randint(- max_roll, max_roll), axis=1)
+        if self.max_random_frequency_roll > 0:
+            fft = np.roll(fft, np.random.randint(- self.max_random_frequency_roll, self.max_random_frequency_roll), axis=0)
 
         if self.fft_in_db:
             # fft = librosa.amplitude_to_db(fft, ref=np.max)
@@ -170,6 +175,7 @@ def get_splitter_dataloaders_fft(validation_noise = False, **kwargs):
         
     data = AudioCountGenderFft(**kwargs)
     train, val = torch.utils.data.random_split(data, [int(len(data)*train_split), len(data)-int(len(data)*train_split)])
+    val = copy.deepcopy(val)
     # ---------------------- No perturbation for validation ---------------------- #
     val.dataset.add_noise = validation_noise
     val.dataset.random_time_roll = False
