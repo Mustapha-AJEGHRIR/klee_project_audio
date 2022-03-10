@@ -10,8 +10,6 @@ TODO
 
 
 # -------------------------------- torch stuff ------------------------------- #
-from curses import window
-from random import seed
 import torch
 from torch.utils.data import Dataset, DataLoader
 
@@ -38,7 +36,7 @@ F32 = torch.float32
 F64 = torch.float64
 
 
-FTYPE = F32 # chosen, mainly because I hate getting nan values during training (when lr high and no grad clipping)
+FTYPE = F32 # chosen, mainly because I got some nan values during training (when lr high and no grad clipping)
 TRAIN_SPLIT = 0.8
 BATCH_SIZE = 64
 
@@ -159,7 +157,7 @@ class AudioCountGenderFft(Dataset):
         if self.fft_in_db:
             # fft = librosa.amplitude_to_db(fft, ref=np.max)
             fft = np.log(1 + fft) # the - is for not having negative values, the 50 is for some scaling (no very high values) 
-        fft = torch.tensor(fft, dtype=self.dtype)
+        # fft = torch.tensor(fft, dtype=self.dtype)
         return fft, self.data[index][1]
     
     def __len__(self):
