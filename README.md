@@ -3,6 +3,7 @@ This is an audio project for school (at Centralesupelec) with Klee group's partn
 
 
 
+
 # Usefull refs :
 Please take a look at my [notion reference page](https://admitted-industry-353.notion.site/References-7f4e39f499a04d5bb919e7b8df767b2a)
 
