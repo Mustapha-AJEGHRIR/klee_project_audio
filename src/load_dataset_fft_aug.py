@@ -193,7 +193,6 @@ def get_splitter_dataloaders_fft(validation_noise = False, **kwargs):
     # train, val = torch.utils.data.random_split(data, [int(len(data)*train_split), len(data)-int(len(data)*train_split)])
     train = AudioCountGenderFft(split = "training", train_split= train_split, **kwargs)
     val = AudioCountGenderFft(split = "validation", train_split= train_split, **kwargs)
-    # # val = copy.deepcopy(val) # FIXME
     # # ---------------------- No perturbation for validation ---------------------- #
     # val.dataset.add_noise = validation_noise
     # val.dataset.random_time_roll = False
