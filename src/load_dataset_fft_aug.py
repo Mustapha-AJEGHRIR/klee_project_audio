@@ -159,7 +159,7 @@ class AudioCountGenderFft(Dataset):
         if self.fft_in_db:
             # fft = librosa.amplitude_to_db(fft, ref=np.max)
             fft = np.log(1 + fft) # the - is for not having negative values, the 50 is for some scaling (no very high values) 
-        fft = torch.tensor(fft, dtype=self.dtype)
+        # fft = torch.tensor(fft, dtype=self.dtype)
         return fft, self.data[index][1]
     
     def __len__(self):
