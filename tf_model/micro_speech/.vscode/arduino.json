@@ -1,0 +1,6 @@
+{
+    "port": "COM6",
+    "board": "arduino:mbed_nano:nano33ble",
+    "programmer": "arduino:cmsis-dap",
+    "sketch": "micro_speech.ino"
+}
