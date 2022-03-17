@@ -47,3 +47,6 @@ Then I just ran the script `convert_models.py`.
 ```bash
 $ python convert_models.py
 ```
+
+### Onnx compatibility
+![onnx compatibility](./onnx.png)
