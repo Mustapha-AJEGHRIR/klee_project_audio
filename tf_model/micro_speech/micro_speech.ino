@@ -51,7 +51,8 @@ namespace
 
 // The name of this function is important for Arduino compatibility.
 void setup()
-{
+{ 
+  Serial.begin(9600);
   // Set up logging. Google style is to avoid globals or statics because of
   // lifetime uncertainty, but since this has a trivial destructor it's okay.
   // NOLINTNEXTLINE(runtime-global-variables)
@@ -78,8 +79,25 @@ void setup()
   //
   // tflite::AllOpsResolver resolver;
   // NOLINTNEXTLINE(runtime-global-variables)
+  // static tflite::MicroMutableOpResolver<4> micro_op_resolver(error_reporter);
+  // if (micro_op_resolver.AddDepthwiseConv2D() != kTfLiteOk)
+  // {
+  //   return;
+  // }
+  // if (micro_op_resolver.AddFullyConnected() != kTfLiteOk)
+  // {
+  //   return;
+  // }
+  // if (micro_op_resolver.AddSoftmax() != kTfLiteOk)
+  // {
+  //   return;
+  // }
+  // if (micro_op_resolver.AddReshape() != kTfLiteOk)
+  // {
+  //   return;
+  // }
   static tflite::MicroMutableOpResolver<4> micro_op_resolver(error_reporter);
-  if (micro_op_resolver.AddDepthwiseConv2D() != kTfLiteOk)
+  if (micro_op_resolver.AddConv2D()() != kTfLiteOk)
   {
     return;
   }
@@ -137,7 +155,7 @@ void setup()
 
 // The name of this function is important for Arduino compatibility.
 void loop()
-{
+{ 
   // Fetch the spectrogram for the current time.
   const int32_t current_time = LatestAudioTimestamp();
   int how_many_new_slices = 0;
@@ -149,8 +167,13 @@ void loop()
     return;
   }
   previous_time = current_time;
+
+
+
+
   // If no new audio samples have been received since last time, don't bother
   // running the network model.
+  Serial.print(" . ");
   if (how_many_new_slices == 0)
   {
     return;
@@ -161,6 +184,17 @@ void loop()
   {
     model_input_buffer[i] = feature_buffer[i];
   }
+  // transform model input to string
+  Serial.print("model_input_buffer: ");
+  for (int i = 0; i < kFeatureElementCount; i++)
+  {
+    Serial.print(model_input_buffer[i]);
+    Serial.print(" ");
+  }
+  Serial.print("\n");
+
+
+
 
   // Run the model on the spectrogram input and make sure it succeeds.
   TfLiteStatus invoke_status = interpreter->Invoke();
@@ -170,23 +204,42 @@ void loop()
     return;
   }
 
+
+
+
+
+
   // Obtain a pointer to the output tensor
   TfLiteTensor *output = interpreter->output(0);
-  // Determine whether a command was recognized based on the output of inference
-  const char *found_command = nullptr;
-  uint8_t score = 0;
-  bool is_new_command = false;
-  TfLiteStatus process_status = recognizer->ProcessLatestResults(
-      output, current_time, &found_command, &score, &is_new_command);
-  if (process_status != kTfLiteOk)
-  {
-    TF_LITE_REPORT_ERROR(error_reporter,
-                        "RecognizeCommands::ProcessLatestResults() failed");
-    return;
-  }
-  // Do something based on the recognized command. The default implementation
-  // just prints to the error console, but you should replace this with your
-  // own function for a real application.
-  RespondToCommand(error_reporter, current_time, found_command, score,
-                  is_new_command);
+
+  Serial.print("_ output : ");
+  // Serial.print(typeid(output->data.int8).name());
+  // Serial.print("    _ output 0: ");
+  // Serial.print(itoa(5));
+  Serial.print(output->data.int8[0]);
+  Serial.print(" ");
+  Serial.print(output->data.int8[1]);
+  // Serial.print(" ");
+  // Serial.print(output->data.int8[2]);
+  // Serial.print(" ");
+  // Serial.print(output->data.int8[3]);
+  Serial.print("\n");
+
+  // // Determine whether a command was recognized based on the output of inference
+  // const char *found_command = nullptr;
+  // uint8_t score = 0;
+  // bool is_new_command = false;
+  // TfLiteStatus process_status = recognizer->ProcessLatestResults(
+  //     output, current_time, &found_command, &score, &is_new_command);
+  // if (process_status != kTfLiteOk)
+  // {
+  //   TF_LITE_REPORT_ERROR(error_reporter,
+  //                       "RecognizeCommands::ProcessLatestResults() failed");
+  //   return;
+  // }
+  // // Do something based on the recognized command. The default implementation
+  // // just prints to the error console, but you should replace this with your
+  // // own function for a real application.
+  // RespondToCommand(error_reporter, current_time, found_command, score,
+  //                 is_new_command);
 }
