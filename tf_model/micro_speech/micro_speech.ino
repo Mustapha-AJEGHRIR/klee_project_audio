@@ -52,6 +52,7 @@ namespace
 // The name of this function is important for Arduino compatibility.
 void setup()
 { 
+  delay(2000);
   Serial.begin(9600);
   // Set up logging. Google style is to avoid globals or statics because of
   // lifetime uncertainty, but since this has a trivial destructor it's okay.
@@ -150,6 +151,9 @@ void setup()
   static FeatureProvider static_feature_provider(kFeatureElementCount,
                                                 feature_buffer);
   feature_provider = &static_feature_provider;
+  Serial.print("Feature provider ready");
+  Serial.println();
+  Serial.println(feature_provider->feature_size_);
 
   static RecognizeCommands static_recognizer(error_reporter);
   recognizer = &static_recognizer;
@@ -160,6 +164,12 @@ void setup()
 // The name of this function is important for Arduino compatibility.
 void loop()
 { 
+  delay(3000);
+  Serial.print("input size = ");
+  Serial.print(kFeatureElementCount);
+  Serial.print(" _ ");
+  Serial.print(feature_provider->feature_size_);
+  Serial.print("\n");
   // Fetch the spectrogram for the current time.
   const int32_t current_time = LatestAudioTimestamp();
   int how_many_new_slices = 0;

@@ -29,7 +29,8 @@ constexpr int kAudioSampleFrequency = 16000;
 // If you change the way you preprocess the input, update all these constants.
 constexpr int kFeatureSliceSize = 40;
 constexpr int kFeatureSliceCount = 49;
-constexpr int kFeatureElementCount = (kFeatureSliceSize * kFeatureSliceCount);
+// constexpr int kFeatureElementCount = (kFeatureSliceSize * kFeatureSliceCount);
+constexpr int kFeatureElementCount = 80000;
 constexpr int kFeatureSliceStrideMs = 20;
 constexpr int kFeatureSliceDurationMs = 30;
 
