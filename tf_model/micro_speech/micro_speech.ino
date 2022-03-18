@@ -96,8 +96,12 @@ void setup()
   // {
   //   return;
   // }
-  static tflite::MicroMutableOpResolver<4> micro_op_resolver(error_reporter);
-  if (micro_op_resolver.AddConv2D()() != kTfLiteOk)
+  static tflite::MicroMutableOpResolver<5> micro_op_resolver(error_reporter);
+  if (micro_op_resolver.AddConv2D() != kTfLiteOk)
+  {
+    return;
+  }
+  if (micro_op_resolver.AddMaxPool2D() != kTfLiteOk)
   {
     return;
   }
