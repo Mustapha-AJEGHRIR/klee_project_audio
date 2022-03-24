@@ -97,8 +97,49 @@ void setup()
   // {
   //   return;
   // }
-  static tflite::MicroMutableOpResolver<5> micro_op_resolver(error_reporter);
+  Serial.println("add resolver");
+  static tflite::MicroMutableOpResolver<15> micro_op_resolver(error_reporter);
+  if (micro_op_resolver.AddQuantize() != kTfLiteOk)
+  {
+    return;
+  }
+  if (micro_op_resolver.AddDequantize() != kTfLiteOk)
+  {
+    return;
+  }
   if (micro_op_resolver.AddConv2D() != kTfLiteOk)
+  {
+    return;
+  }
+  if (micro_op_resolver.AddRelu() != kTfLiteOk)
+  {
+    return;
+  }
+  if (micro_op_resolver.AddLogistic() != kTfLiteOk)
+  {
+    return;
+  }
+  if (micro_op_resolver.AddAdd() != kTfLiteOk)
+  {
+    return;
+  }
+  if (micro_op_resolver.AddMul() != kTfLiteOk)
+  {
+    return;
+  }
+  if (micro_op_resolver.AddSplit() != kTfLiteOk)
+  {
+    return;
+  }
+  if (micro_op_resolver.AddTanh() != kTfLiteOk)
+  {
+    return;
+  }
+  if (micro_op_resolver.AddPack() != kTfLiteOk)
+  {
+    return;
+  }
+  if (micro_op_resolver.AddUnpack() != kTfLiteOk)
   {
     return;
   }
@@ -119,11 +160,13 @@ void setup()
     return;
   }
 
+  Serial.println("build interpreter");
   // Build an interpreter to run the model with.
   static tflite::MicroInterpreter static_interpreter(
       model, micro_op_resolver, tensor_arena, kTensorArenaSize, error_reporter);
   interpreter = &static_interpreter;
 
+  Serial.println("Tensor Arena");
   // Allocate memory from the tensor_arena for the model's tensors.
   TfLiteStatus allocate_status = interpreter->AllocateTensors();
   if (allocate_status != kTfLiteOk)
@@ -132,6 +175,7 @@ void setup()
     return;
   }
 
+  Serial.println("Get info about memory arena");
   // Get information about the memory area to use for the model's input.
   model_input = interpreter->input(0);
   if ((model_input->dims->size != 2) || (model_input->dims->data[0] != 1) ||
