@@ -16,6 +16,7 @@ $ cd data
 $ bash get_data.sh
 ```
 
+
 # Content of the project
 ```
     .
