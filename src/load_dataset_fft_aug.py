@@ -69,7 +69,7 @@ class AudioCountGenderFft(Dataset):
                 fft_in_db = False,
                 eps = 1e-8,
                 shuffle = False, #made by the dataloader itself
-                noise_attenuation = 0.1,
+                noise_attenuation = 0.00001,
                 add_noise = True,
                 random_time_roll = True, # Will randomly shift the audio on the time axis (fft)
                 max_random_frequency_roll = 1, # 1*40=40hz, Will randomly roll between -max_random_frequency_roll and max_random_frequency_roll
