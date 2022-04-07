@@ -4,6 +4,7 @@ import numpy as np
 import scipy.signal
 from scipy.io.wavfile import write
 from time import time
+import librosa
 
 
 # ---------------------------------------------------------------------------- #
@@ -51,21 +52,24 @@ while True :
     #                               Preprocess Audio                               #
     # ---------------------------------------------------------------------------- #
     tik = time()
-    _, _, fft_rec = scipy.signal.spectrogram(myrecording,
-                                            fs = SAMPLE_RATE,
-                                            nperseg = FFT_N_PERSEG,
-                                            noverlap = FFT_N_OVERLAP,
-                                            window = FFT_WINDOW_TYPE
-                                            )
+    if model == "g":
+        _, _, fft_rec = scipy.signal.spectrogram(myrecording,
+                                                fs = SAMPLE_RATE,
+                                                nperseg = FFT_N_PERSEG,
+                                                noverlap = FFT_N_OVERLAP,
+                                                window = FFT_WINDOW_TYPE
+                                                )
 
-    fft_rec = fft_rec / (np.linalg.norm(fft_rec, axis=0, keepdims=True) + EPS)
-    fft_rec = fft_rec.astype(np.float32)
-    fft_rec = fft_rec[None, :, :] # Add the batch dimension = 1
-    if model == "p":
-        fft_rec = np.transpose(fft_rec, (0, 2, 1))
-        fft_rec = np.pad(fft_rec, ((0, 0), (0, 2), (0, 0)))
-        fft_rec = fft_rec[None, :, :, :]
-    
+        fft_rec = fft_rec / (np.linalg.norm(fft_rec, axis=0, keepdims=True) + EPS)
+        fft_rec = fft_rec.astype(np.float32)
+        fft_rec = fft_rec[None, :, :] # Add the batch dimension = 1
+    elif model == "p":
+        fft_rec = np.abs(librosa.stft(myrecording, n_fft=400, hop_length=160)).T
+        fft_rec = fft_rec[:500, :]
+        fft_rec = fft_rec / (np.linalg.norm(fft_rec, axis=0, keepdims=True) + EPS)
+        fft_rec = fft_rec.astype(np.float32)
+        fft_rec = fft_rec[None, None, :, :] # Add the batch dimension = 1
+        
     tok = time()
     print("pre processing time : {:.3f}s".format(tok-tik))
 
@@ -79,7 +83,7 @@ while True :
     outputs = ort_sess.run([], {input_name: fft_rec})
     tok = time()
     if model == "p":
-        print("\t=> Activations [M, F] :   ", outputs[0][0])
+        print("\t=> Activations :   ", outputs[0][0])
         print("\t=> Total amount of people :   ", np.argmax(outputs[0][0]))
         print("\t=> Duration :   {:.3f}s".format(tok-tik))
     else:
