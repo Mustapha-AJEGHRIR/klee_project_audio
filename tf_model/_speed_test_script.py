@@ -2,7 +2,8 @@
 # # Imports
 
 # %%
-import tensorflow as tf
+# import tensorflow as tf
+import tflite_runtime.interpreter as tflite
 
 import onnxruntime as ort
 import numpy as np
@@ -66,18 +67,19 @@ print("\tDuration : {:.2f}ms".format(((tok-tik)/RUNS)*1000))
 print("**********")
 print("TF-lite".center(10, "-"))
 print("**********")
-converter = tf.lite.TFLiteConverter.from_saved_model("saved/tf_model")
-converter.optimizations = [tf.lite.Optimize.DEFAULT]
-tflite_model = converter.convert()
+# converter = tflite.TFLiteConverter.from_saved_model("saved/tf_model")
+# converter.optimizations = [tflite.Optimize.DEFAULT]
+# tflite_model = converter.convert()
 
 # %%
-interpreter = tf.lite.Interpreter(model_content=tflite_model)
+# interpreter = tflite.Interpreter(model_content=tflite_model)
+interpreter = tflite.Interpreter(model_path="tf_model_unroll_false.tflite")
 interpreter.allocate_tensors()
 
 input_index = interpreter.get_input_details()[0]['index']
 output_index = interpreter.get_output_details()[0]['index']
 
-interpreter.set_tensor(input_index, tf.random.normal([1, 201, 498]))
+interpreter.set_tensor(input_index, np.random.rand(1, 201, 498).astype(np.float32))
 
 tik = time()
 for _ in range(RUNS):
