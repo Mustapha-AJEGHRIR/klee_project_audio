@@ -2,6 +2,7 @@ wandb/
 .env_consts
 custom_models/
 *.zip
+assets
 
 
 # Byte-compiled / optimized / DLL files
