@@ -45,12 +45,13 @@ $ bash get_data.sh
     └── wandb
 ```
 ## CountNet
-#### Usage
+#### Use
 First get the model repository
 ```bash
 $ git submodule init
 $ git submodule update
 ```
+Otherwise it is possible to pass this step if the flage `--recurse-submodules` was passed to the `git clone command`
 
 #### Description
 **The goal :**
