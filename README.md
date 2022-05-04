@@ -53,7 +53,6 @@ $ git submodule update
 ```
 Otherwise it is possible to pass this step if the flage `--recurse-submodules` was passed to the `git clone command`
 
-#### Description
 **The goal :**
 Count the amount of concurrent speakers and detect their genders in an Audio.
 
