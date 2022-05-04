@@ -21,7 +21,6 @@ Just execute the bash script `get_data.sh` inside the data folder to get the dat
 $ cd data
 $ bash get_data.sh
 ```
-
 # Content of the project
 ``` bash
     .
