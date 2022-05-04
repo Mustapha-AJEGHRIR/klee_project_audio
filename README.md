@@ -21,6 +21,8 @@ Just execute the bash script `get_data.sh` inside the data folder to get the dat
 $ cd data
 $ bash get_data.sh
 ```
+### Windows
+Use the links in the `data/get_data.sh` to download the data manually.
 # Content of the project
 ``` bash
     .
