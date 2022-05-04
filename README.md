@@ -45,7 +45,7 @@ $ bash get_data.sh
     └── wandb
 ```
 ## CountNet
-#### Use
+#### How to use
 First get the model repository
 ```bash
 $ git submodule init
