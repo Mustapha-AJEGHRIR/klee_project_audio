@@ -44,8 +44,7 @@ $ bash get_data.sh
     │   └── tmp
     └── wandb
 ```
-## CountNet
-#### How to use
+## How to use
 First get the model repository
 ```bash
 $ git submodule init
@@ -53,8 +52,7 @@ $ git submodule update
 ```
 Otherwise it is possible to pass this step if the flage `--recurse-submodules` was passed to the `git clone command`
 
-
-
+#### Other
 **The goal :**
 Count the amount of concurrent speakers and detect their genders in an Audio.
 
