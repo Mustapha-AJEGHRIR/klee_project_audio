@@ -1,5 +1,5 @@
 # klee_project_audio
-This is an audio project for school (at Centralesupelec) with Klee group's partnership.
+This is an audio project for counting people by gender made for school (at Centralesupelec) with Klee group's partnership.
 
 # Overview 
 This project contains code for an audio gender counter. It also contains code to convert the final model into TF-Lite and ONNX. 
